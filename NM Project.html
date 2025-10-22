@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>InsightStream — Navigate the News Landscape</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#f7f9fc; --muted:#6b7280; --accent:#0f62fe; --card:#ffffff;
+    --radius:12px; --gap:16px; --max:1200px; color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:#0b1a2b;}
+  body{background:linear-gradient(180deg,#eef6ff 0%, #ffffff 60%);padding:28px;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:var(--max)}
+  header.mast{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#6fd5ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:18px;box-shadow:0 6px 24px rgba(15,98,254,0.12)}
+  .site-title{line-height:1}
+  .site-title h1{margin:0;font-size:20px}
+  .site-title p{margin:0;font-size:13px;color:var(--muted)}
+  nav{margin-left:auto;display:flex;gap:10px;align-items:center}
+  nav .nav-btn{background:transparent;border:0;padding:8px 12px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer}
+  nav .cta{background:var(--accent);color:white;padding:8px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(15,98,254,0.12);border:0}
+  .hero{display:grid;grid-template-columns:1fr 360px;gap:var(--gap);align-items:start;margin-bottom:18px}
+  .hero-main{background:var(--card);padding:18px;border-radius:14px;box-shadow:0 6px 28px rgba(11,26,43,0.06)}
+  .hero-image{height:320px;border-radius:10px;background-size:cover;background-position:center;margin-bottom:12px}
+  .hero-meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;margin-bottom:8px}
+  .headline{font-size:20px;font-weight:700;margin-bottom:8px}
+  .lead{color:#234a6b}
+  .sidebar{background:var(--panel);padding:14px;border-radius:12px;height:100%}
+  .top-stories{display:flex;flex-direction:column;gap:10px}
+  .mini{display:flex;gap:10px;align-items:center}
+  .mini .m-thumb{width:80px;height:58px;border-radius:8px;background-size:cover;background-position:center;flex-shrink:0}
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:var(--gap);align-items:start}
+  .main-col{background:transparent}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(11,26,43,0.04);box-shadow:0 8px 20px rgba(11,26,43,0.03);display:flex;flex-direction:column;gap:10px}
+  .thumb{height:140px;border-radius:8px;background-size:cover;background-position:center}
+  .meta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+  .excerpt{color:#334e63;font-size:14px}
+  .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+  .btn{background:transparent;border:1px solid rgba(11,26,43,0.06);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .searchbar{display:flex;gap:8px;align-items:center;background:var(--panel);padding:10px;border-radius:12px;border:1px solid rgba(11,26,43,0.04);margin-bottom:12px}
+  .searchbar input{border:0;background:transparent;outline:none;width:100%;font-size:14px}
+  .widget{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(11,26,43,0.04)}
+  .trend-list{display:flex;flex-direction:column;gap:8px}
+  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+  @media(max-width:980px){.hero{grid-template-columns:1fr} .grid{grid-template-columns:1fr} .cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="mast">
+    <div class="brand">
+      <div class="logo">IS</div>
+      <div class="site-title">
+        <h1>InsightStream</h1>
+        <p>Navigate the News Landscape — live headlines</p>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn" id="navHome">Home</button>
+      <button class="nav-btn" id="navWorld">World</button>
+      <button class="nav-btn" id="navTech">Tech</button>
+      <button class="cta" id="subscribeBtn">Subscribe</button>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-main">
+      <div class="searchbar">
+        <input id="search" placeholder="Search headlines, topics, or sources...">
+        <button class="btn" id="searchBtn">Search</button>
+      </div>
+
+      <div id="heroImg" class="hero-image"></div>
+      <div class="hero-meta"><div id="heroSource">Source</div><div id="heroTime">Time</div></div>
+      <div id="heroTitle" class="headline"></div>
+      <div id="heroLead" class="lead"></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" id="readHero">Read full story</button>
+        <button class="btn" id="saveHero">Bookmark</button>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div style="font-weight:700;margin-bottom:8px">Top stories</div>
+      <div class="top-stories" id="topStories"></div>
+      <hr style="border:none;height:1px;background:rgba(11,26,43,0.04);margin:12px 0;border-radius:6px">
+      <div style="font-weight:700;margin-bottom:8px">Newsletter</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Get a concise briefing every morning.</div>
+      <div style="display:flex;gap:8px">
+        <input placeholder="your@email.com" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(11,26,43,0.04)">
+        <button class="btn">Sign up</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="grid">
+    <main class="main-col">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-weight:700">Latest</div>
+        <div style="color:var(--muted);font-size:13px" id="updatedAt">Updated —</div>
+      </div>
+
+      <div class="cards" id="cards"></div>
+      <div style="text-align:center;margin-top:14px">
+        <button id="loadMore" class="btn">Load more</button>
+      </div>
+    </main>
+
+    <aside style="width:320px">
+      <div class="widget" style="margin-bottom:12px">
+        <div style="font-weight:700;margin-bottom:8px">Trending</div>
+        <div class="trend-list" id="trends"></div>
+      </div>
+
+      <div class="widget">
+        <div style="font-weight:700;margin-bottom:8px">Bookmarks</div>
+        <div id="bookmarks"><div style="color:var(--muted)">No bookmarks yet.</div></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>InsightStream • Powered by NewsAPI</footer>
+</div>
+
+<div id="modal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:99">
+  <div style="width:min(900px,96%);background:white;padding:18px;border-radius:12px;max-height:90vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-weight:700" id="modalTitle"></div>
+      <button id="closeModal" class="btn">Close</button>
+    </div>
+    <div id="modalMeta" style="color:var(--muted);font-size:13px;margin-bottom:8px"></div>
+    <div id="modalImg" style="height:360px;border-radius:8px;background-size:cover;background-position:center;margin-bottom:12px"></div>
+    <div id="modalBody" style="line-height:1.7;color:#243b53"></div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <a id="openOriginal" target="_blank" rel="noopener" class="btn">Open source</a>
+      <button id="modalBookmark" class="btn">Bookmark</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_KEY = "4046f615fc104a3284f982d365dc6d93"; // <-- replace with your NewsAPI key
+let articles = [];
+let shown = 6;
+const bookmarks = new Map(JSON.parse(localStorage.getItem('is_insight_bookmarks')||'[]'));
+
+const el = {
+  heroImg: document.getElementById('heroImg'),
+  heroSource: document.getElementById('heroSource'),
+  heroTime: document.getElementById('heroTime'),
+  heroTitle: document.getElementById('heroTitle'),
+  heroLead: document.getElementById('heroLead'),
+  topStories: document.getElementById('topStories'),
+  cards: document.getElementById('cards'),
+  trends: document.getElementById('trends'),
+  updatedAt: document.getElementById('updatedAt'),
+  bookmarks: document.getElementById('bookmarks'),
+  modal: document.getElementById('modal'),
+  modalTitle: document.getElementById('modalTitle'),
+  modalMeta: document.getElementById('modalMeta'),
+  modalImg: document.getElementById('modalImg'),
+  modalBody: document.getElementById('modalBody'),
+  openOriginal: document.getElementById('openOriginal')
+};
+
+function timeAgo(iso){
+  const diff = Math.floor((Date.now() - new Date(iso))/1000);
+  if(diff < 60) return diff + 's ago';
+  if(diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if(diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+async function fetchNews(category='general'){
+  try{
+    const res = await fetch(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&pageSize=30&apiKey=${API_KEY}`);
+    const data = await res.json();
+    if(data.articles){
+      articles = data.articles.map((a,i)=>({
+        id:'api'+i,
+        title:a.title||'Untitled',
+        excerpt:a.description||'',
+        img:a.urlToImage||'https://via.placeholder.com/800x400?text=No+Image',
+        source:a.source?.name||'Source',
+        time:a.publishedAt||new Date().toISOString(),
+        content:a.content||a.description||'',
+        url:a.url||'#'
+      }));
+      shown = 6;
+      renderAll();
+    }
+  } catch(e){ console.error(e); }
+}
+
+function renderHero(){ 
+  if(articles.length===0) return;
+  const a = articles[0];
+  el.heroImg.style.backgroundImage = `url('${a.img}')`;
+  el.heroSource.textContent = a.source;
+  el.heroTime.textContent = timeAgo(a.time);
+  el.heroTitle.textContent = a.title;
+  el.heroLead.textContent = a.excerpt;
+  document.getElementById('readHero').onclick = () => openArticle(a.id);
+  document.getElementById('saveHero').onclick = () => toggleBookmark(a.id);
+}
+
+function renderTopStories(){
+  el.topStories.innerHTML='';
+  articles.slice(0,4).forEach(a=>{
+    const d = document.createElement('div'); d.className='mini';
+    d.innerHTML=`<div class="m-thumb" style="background-image:url('${a.img}')"></div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:14px">${a.title}</div>
+      <div style="color:var(--muted);font-size:13px">${a.source} • ${timeAgo(a.time)}</div>
+    </div>`;
+    d.onclick=()=>openArticle(a.id);
+    el.topStories.appendChild(d);
+  });
+}
+
+function renderCards(){
+  el.cards.innerHTML='';
+  articles.slice(0,shown).forEach(a=>{
+    const c = document.createElement('article'); c.className='card';
+    c.innerHTML=`
+      <div class="thumb" style="background-image:url('${a.img}')"></div>
+      <div class="meta"><div>${a.source}</div><div>${timeAgo(a.time)}</div></div>
+      <div style="font-weight:700;margin-top:6px">${a.title}</div>
+      <div class="excerpt">${a.excerpt}</div>
+      <div class="card-footer">
+        <div style="color:var(--muted);font-size:13px">${a.source}</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="openArticle('${a.id}')">Read</button>
+          <button class="btn" onclick="toggleBookmark('${a.id}')">${bookmarks.has(a.id)?'Bookmarked':'Bookmark'}</button>
+        </div>
+      </div>
+    `;
+    el.cards.appendChild(c);
+  });
+  el.updatedAt.textContent='Updated • '+new Date().toLocaleString();
+  document.getElementById('loadMore').onclick=()=>{ shown+=6; renderCards(); };
+}
+
+function renderTrends(){
+  el.trends.innerHTML='';
+  const sample=['#Climate','#AI','#TechNews','#Space','#Sports'];
+  sample.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.style.display='flex'; d.style.justifyContent='space-between';
+    d.innerHTML=`<div style="font-weight:600">${t}</div><div style="color:var(--muted)">${(10-i)}k</div>`;
+    el.trends.appendChild(d);
+  });
+}
+
+function renderBookmarks(){
+  if(bookmarks.size===0){ el.bookmarks.innerHTML='<div style="color:var(--muted)">No bookmarks yet.</div>'; return; }
+  el.bookmarks.innerHTML='';
+  Array.from(bookmarks.keys()).forEach(id=>{
+    const a = articles.find(x=>x.id===id);
+    if(!a) return;
+    const d=document.createElement('div');
+    d.style.display='flex'; d.style.justifyContent='space-between'; d.style.marginBottom='8px';
+    d.innerHTML=`<div style="font-size:14px">${a.title}</div><div><button class="btn" onclick="toggleBookmark('${a.id}')">Remove</button></div>`;
+    el.bookmarks.appendChild(d);
+  });
+}
+
+function openArticle(id){
+  const a=articles.find(x=>x.id===id); if(!a) return;
+  el.modal.style.display='flex';
+  el.modalTitle.textContent=a.title;
+  el.modalMeta.textContent=`${a.source} • ${new Date(a.time).toLocaleString()}`;
+  el.modalImg.style.backgroundImage=`url('${a.img}')`;
+  el.modalBody.textContent=a.content;
+  el.openOriginal.href=a.url;
+  document.getElementById('modalBookmark').onclick=()=>toggleBookmark(a.id);
+}
+
+document.getElementById('closeModal').onclick=()=>{ el.modal.style.display='none'; };
+
+function toggleBookmark(id){
+  if(bookmarks.has(id)) bookmarks.delete(id); else bookmarks.set(id,true);
+  localStorage.setItem('is_insight_bookmarks',JSON.stringify(Array.from(bookmarks.entries())));
+  renderBookmarks(); renderCards();
+}
+
+// search
+document.getElementById('searchBtn').onclick=()=>{
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  if(!q){ fetchNews(); return; }
+  articles=articles.filter(a=>a.title.toLowerCase().includes(q)||a.excerpt.toLowerCase().includes(q));
+  shown=12; renderAll();
+};
+document.getElementById('search').addEventListener('keydown',(e)=>{if(e.key==='Enter') document.getElementById('searchBtn').click();});
+
+// nav
+document.getElementById('navHome').onclick=()=>fetchNews('general');
+document.getElementById('navWorld').onclick=()=>fetchNews('general');
+document.getElementById('navTech').onclick=()=>fetchNews('technology');
+
+function renderAll(){ renderHero(); renderTopStories(); renderCards(); renderTrends(); renderBookmarks(); }
+
+fetchNews(); // initial load
+</script>
+</body>
+</html>
